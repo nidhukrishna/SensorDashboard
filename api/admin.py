@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import SensorDataset, ExtractedCycle
+
+admin.site.register(SensorDataset)
+admin.site.register(ExtractedCycle)

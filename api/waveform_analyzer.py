@@ -40,7 +40,10 @@ class WaveformAnalyzer:
             rise_low = trough_amp + (peak_amp - trough_amp) * (threshold_percent / 100)
             rise_high = trough_amp + (peak_amp - trough_amp) * ((100 - threshold_percent) / 100)
             
-            rise_indices = np.where((self.time >= self.time[trough_idx]) & (self.time <= peak_time))[0]
+            rise_indices = np.where(
+    (self.time >= trough_time) &
+    (self.time <= self.time[next_peak_idx])
+)[0]
             
             rise_cross_low = None
             rise_cross_high = None
@@ -48,15 +51,21 @@ class WaveformAnalyzer:
             for idx in rise_indices:
                 if self.amplitude[idx] >= rise_low and rise_cross_low is None:
                     rise_cross_low = idx
-                if self.amplitude[idx] >= rise_high and rise_cross_high is None:
+                if self.amplitude[idx] >= rise_high:
                     rise_cross_high = idx
             
-            rise_time = (self.time[rise_cross_high] - self.time[rise_cross_low]) if (rise_cross_high and rise_cross_low) else None
-            
+            rise_time = (
+    self.time[rise_cross_high] - self.time[rise_cross_low]
+) if (
+    rise_cross_high is not None and rise_cross_low is not None
+) else None
             fall_high = peak_amp - (peak_amp - trough_amp) * (threshold_percent / 100)
             fall_low = peak_amp - (peak_amp - trough_amp) * ((100 - threshold_percent) / 100)
             
-            fall_indices = np.where((self.time >= peak_time) & (self.time <= self.time[trough_idx]))[0]
+            fall_indices = np.where(
+    (self.time >= peak_time) &
+    (self.time <= self.time[next_peak_idx])
+)[0]
             
             fall_cross_high = None
             fall_cross_low = None
@@ -67,7 +76,11 @@ class WaveformAnalyzer:
                 if self.amplitude[idx] <= fall_low and fall_cross_low is None:
                     fall_cross_low = idx
             
-            fall_time = (self.time[fall_cross_low] - self.time[fall_cross_high]) if (fall_cross_low and fall_cross_high) else None
+            fall_time = (
+    self.time[fall_cross_low] - self.time[fall_cross_high]
+) if (
+    fall_cross_low is not None and fall_cross_high is not None
+) else None
             
             results.append({
                 'cycle_number': int(cycle_count),
