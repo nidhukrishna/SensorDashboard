@@ -1,5 +1,17 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
+
+import { Line } from 'react-chartjs-2';
 
 import axios from 'axios';
 
@@ -7,6 +19,16 @@ import {
   useEffect,
   useState
 } from 'react';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 function App() {
 
@@ -83,6 +105,29 @@ function App() {
     cycles.reduce((a, b) => a + (b.fall_time || 0), 0)
     / (totalCycles || 1);
 
+  const chartData = {
+
+  labels: cycles.map(cycle => cycle.cycle_number),
+
+  datasets: [
+
+    {
+      label: 'Peak Amplitude',
+      data: cycles.map(cycle => cycle.peak_amplitude),
+      borderColor: 'blue',
+      backgroundColor: 'blue',
+    },
+
+    {
+      label: 'Fall Time',
+      data: cycles.map(cycle => cycle.fall_time),
+      borderColor: 'red',
+      backgroundColor: 'red',
+    }
+
+  ]
+};
+
   return (
 
     <div className="container py-5">
@@ -117,6 +162,8 @@ function App() {
         </div>
 
       </div>
+
+      
 
       {/* Statistics */}
 
@@ -157,6 +204,16 @@ function App() {
           </div>
 
         </div>
+
+      </div>
+
+      <div className="card shadow p-4 mb-5">
+
+        <h4 className="mb-4">
+          Sensor Analytics Graph
+        </h4>
+
+        <Line data={chartData} />
 
       </div>
 
