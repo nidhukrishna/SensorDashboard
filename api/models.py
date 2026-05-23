@@ -34,4 +34,4 @@ class ExtractedCycle(models.Model):
         ordering = ['cycle_number']
 
     def __str__(self):
-        return f"Cycle {self.id} - Safe: {self.is_safe}"
+        return f"Cycle {self.cycle_number}"
